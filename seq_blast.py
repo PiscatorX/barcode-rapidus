@@ -1,10 +1,19 @@
 #! /usr/bin/python
+
 from Bio.Blast import NCBIWWW
 from Bio import SeqIO
 import argparse
 import time
 import sys
 import os
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__credits__ = "Rob Knight"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
 
 
 
