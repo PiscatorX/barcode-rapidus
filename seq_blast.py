@@ -8,7 +8,6 @@ import sys
 import os
 __author__ = "Andrew Ndhlovu"
 __copyright__ = "Copyright 2018"
-__credits__ = "Rob Knight"
 __license__ = "GPL"
 __version__ = "3"
 __maintainer__ = "Andrew Ndhlovu"
