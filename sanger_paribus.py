@@ -13,7 +13,7 @@ __license__ = "GPL"
 __version__ = "3"
 __maintainer__ = "Andrew Ndhlovu"
 __email__ = "drewxdvst@outlook.com"
-Entrez.email = "drewxdvst@outlook.com"
+
 
 
 
