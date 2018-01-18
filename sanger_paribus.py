@@ -40,7 +40,7 @@ class  SangerParibus(object):
         
     def find_reads(self, file_patt):
 
-        cut = lambda fname : (os.path.basename(fname.split('_')[0]), fname)
+        cut = lambda fname : (os.path.basename(fname).split('_')[0], fname)
         return [ cut(read) for read in glob.iglob(file_patt) ] 
 
     
@@ -75,7 +75,7 @@ class  SangerParibus(object):
                else:
                    raise Exception,e
             shutil.copy(read, dest_fname)
-            
+            print read, dest_fname
 
 if  __name__ ==  '__main__':
     sanger_reads = SangerParibus()
