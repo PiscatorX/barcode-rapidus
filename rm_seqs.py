@@ -20,7 +20,7 @@ def get_seqs(args):
        data = SeqIO.parse(fp, args.in_format)
        for seq in data:
            ref = seq.id
-           if ref  in rm_list:
+           if ref in rm_list:
                print 'removed ',seq.id
                rm_to_save.append(seq)
                continue
@@ -34,15 +34,15 @@ def get_seqs(args):
             out_file  = args.out_file
         else:
             out_file = 'pruned_'+args.in_file.replace(args.in_format, args.out_format)
-            SeqIO.write(to_save, open(out_file,'w'), args.out_format)
+        SeqIO.write(rm_to_save, open(out_file,'w'), args.out_format)
 
-    
+        
     if args.rm_save and any(rm_to_save):
         if args.rm_out_file:
-            out_file  = args.rm_out_file
+            rm_out_file  = args.rm_out_file
         else:
-            out_file = 'removed_'+args.in_file.replace(args.in_format, args.out_format)
-        
+            rm_out_file = 'removed_'+args.in_file.replace(args.in_format, args.out_format)
+        SeqIO.write(to_save, open(rm_out_file,'w'), args.out_format)
         
 if __name__ == '__main__':
 
@@ -54,8 +54,8 @@ if __name__ == '__main__':
                         action='store', default="fasta", required=False, type=str)
     parser.add_argument('-f','--out-format', dest='out_format', 
                         action='store', required=False, type=str)
-    parser.add_argument('-s','--save-removed', dest='rm_save', 
-                        action='store', required=False, type=str)
+    parser.add_argument('-s','--save-removed', dest='rm_save',default=False, 
+                        action='store_true', required=False)
     parser.add_argument('-R','--rm-outfile', dest='rm_out_file', 
                         action='store', required=False, type=str)
     group = parser.add_mutually_exclusive_group(required=True)    
