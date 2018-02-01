@@ -21,9 +21,9 @@ class BarcodeArbour(object):
                        else ''.join([args.msa_in.replace('fasta',''),'aln'])
 
         self.jModelTest_jar = "java -jar /home/andhlovu/bin/jmodeltest2/dist/jModelTest.jar"
-        self.test_format = 'phylip'
-        self.test_infile = ''.join([args.msa_in.replace('fasta',''), self.test_format ])
-        self.test_out = ''.join([args.msa_in.replace('fasta',''), 'jModelTest' ])
+        self.modeltest_fmt = 'phylip'
+        self.modeltest_infile = ''.join([args.msa_in.replace('fasta',''), self.modeltest_fmt ])
+        self.modeltest_out = ''.join([args.msa_in.replace('fasta',''), 'jModelTest' ])
 
         
         
@@ -44,9 +44,15 @@ class BarcodeArbour(object):
         self.muscle_cline = MuscleCommandline(input=self.msa_in, out=self.msa_out)
         self.run_cmd(str(self.muscle_cline))
         assert os.path.exists(self.msa_out),'Did not find MSA file: {}'.format(self.msa_out)
+        self.conv(self.msa_out, self.modeltest_infile, 'fasta', self.modeltest_fmt)
         
-        with open(self.msa_out) as input_handle, open(self.test_infile, "w") as output_handle:
-            AlignIO.convert(input_handle, 'fasta', output_handle, self.test_format , generic_dna)    
+
+
+
+    def conv(self, infile, outfile, informat, outformat):
+        
+        with open(infile) as input_handle, open(outfile, "w") as output_handle:
+            AlignIO.convert(input_handle, informat, output_handle, outformat, generic_dna)    
         
 
 
@@ -54,7 +60,7 @@ class BarcodeArbour(object):
 
        # -d inputFile Sets the input data file. jModelTest makes use of the ALTER library for converting several alignment formats to PHYLIP
        # -s Sets the number of substitution schemes.
-       # -f Include models with unequals base frecuencies
+       # -f Include models with unequals base frecuencies
        # -i Include models with a proportion invariable sites.
        # -g numberOfRateCategories Include models with rate variation among sites and sets the number of categories. Usually 4 categories are enough.
        # -AIC Calculate the Akaike Information Criterion. 
@@ -65,16 +71,17 @@ class BarcodeArbour(object):
        # -a Estimate model-averaged phylogeny for each active criterion.
        # -w Prints out the PAUP block.
        # -tr numberOfThreads Number of threads to execute (default is the number of logical processors in the machine).
-       args = "-d {} -s 11 -f -i -g 4 -AIC -BIC -AICc -DT -p -a -w -tr {} -o {}".format(self.test_infile,\
+       args = "-d {} -s 11 -f -i -g 4 -AIC -BIC -AICc -DT -p -a -w -tr {} -o {}".format(self.modeltest_infile,\
                                                                                         self.threads,\
-                                                                                        self.test_out)               
+                                                                                        self.modeltest_out)               
        jModelTest_cmd = ' '.join([self.jModelTest_jar, args])
        self.run_cmd(jModelTest_cmd)
 
     
        
     def parse_jModelTest(self):
-    
+
+        
        fp = open(self.test_out)
        
        data, pos = [ (line, fp.tell()) for line in fp if line.startswith('Arguments') ][0]
@@ -148,12 +155,15 @@ class BarcodeArbour(object):
 
        
 
-    def do_phyml(self):
+    def phyml(self):
 
         phyml_cmd = self.model_data['AICc']
         self.run_cmd(phyml_cmd)
+
+    def mrbayes(self):
+        pass
         
-       
+
     def run_cmd(self, cmd):
         print cmd
         process = subprocess.Popen(cmd,
@@ -175,5 +185,6 @@ if  __name__ ==  '__main__':
     arbour = BarcodeArbour(args)
     arbour.run_muscle()
     arbour.run_jModelTest()
-    arbour.parse_jModelTest()
-    arbour.do_phyml()
+    #arbour.parse_jModelTest()
+    #arbour.phyml()
+    #arbour.mrbayes()
