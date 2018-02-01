@@ -82,7 +82,7 @@ class BarcodeArbour(object):
     def parse_jModelTest(self):
 
         
-       fp = open(self.test_out)
+       fp = open(self.modeltest_out)
        
        data, pos = [ (line, fp.tell()) for line in fp if line.startswith('Arguments') ][0]
        seq_file_name = data.split()[3]
@@ -107,7 +107,7 @@ class BarcodeArbour(object):
                  'gamma': '-a'}
        
        self.model_data = {}
-       cmd='{Test}\tphyml -i {} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST'
+       cmd='{Test}\tphyml -i {0} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST'
        
        for data in map(get_data, fp):
            cmd_args = cmd
@@ -185,6 +185,6 @@ if  __name__ ==  '__main__':
     arbour = BarcodeArbour(args)
     arbour.run_muscle()
     arbour.run_jModelTest()
-    #arbour.parse_jModelTest()
-    #arbour.phyml()
+    arbour.parse_jModelTest()
+    arbour.phyml()
     #arbour.mrbayes()
