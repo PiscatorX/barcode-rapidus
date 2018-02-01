@@ -75,7 +75,6 @@ class BarcodeArbour(object):
        
     def parse_jModelTest(self):
     
-       self.test_out = "AB1-TW4_final.jModelTest"
        fp = open(self.test_out)
        
        data, pos = [ (line, fp.tell()) for line in fp if line.startswith('Arguments') ][0]
