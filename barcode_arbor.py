@@ -100,7 +100,7 @@ class BarcodeArbour(object):
        
        get_data = lambda x: zip(params, x.split())
        update_vals = {'TrN':'TN93'}
-       phyl_cmd_fp = open(self.test_out+'.log','w')
+       phyl_cmd_fp = open(self.modeltest_out+'.log','w')
        strip_model =  lambda model: model.split('+', 1)[0]
        del_val = {'titv': '-ts/tv',
                   'pInv': '-v',
