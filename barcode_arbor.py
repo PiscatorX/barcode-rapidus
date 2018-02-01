@@ -145,9 +145,14 @@ class BarcodeArbour(object):
 # 	  Can be either NNI (default, fast) or SPR (a bit slower than NNI) or BEST (best of NNI and SPR search).
 """
        print >>phyl_cmd_fp, log
-       print self.model_data['AICc']
 
        
+
+    def do_phyml(self):
+
+        phyml_cmd = self.model_data['AICc']
+        self.run_cmd(phyml_cmd)
+        
        
     def run_cmd(self, cmd):
         print cmd
@@ -173,3 +178,4 @@ if  __name__ ==  '__main__':
     #arbour.run_muscle()
     #arbour.run_jModelTest()
     arbour.parse_jModelTest()
+    arbour.do_phyml()
