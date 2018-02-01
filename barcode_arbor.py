@@ -20,11 +20,12 @@ class BarcodeArbour(object):
         self.msa_out = args.msa_out if args.msa_out\
                        else ''.join([args.msa_in.replace('fasta',''),'aln'])
 
-        self.jModelTest_jar = "java -jar /opt/jmodeltest2/dist/jModelTest.jar"
-        #self.jModelTest_jar = "java -jar /home/andhlovu/bin/jmodeltest2/dist/jModelTest.jar"
+        self.jModelTest_jar = "java -jar /home/andhlovu/bin/jmodeltest2/dist/jModelTest.jar"
         self.test_format = 'phylip'
         self.test_infile = ''.join([args.msa_in.replace('fasta',''), self.test_format ])
         self.test_out = ''.join([args.msa_in.replace('fasta',''), 'jModelTest' ])
+
+        
         
     def run_muscle(self):
         
@@ -166,8 +167,6 @@ class BarcodeArbour(object):
         print stderr
 
         
-    
-
 if  __name__ ==  '__main__':
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("msa_in")
@@ -175,7 +174,7 @@ if  __name__ ==  '__main__':
     parser.add_argument('-t','--threads', type=int, default=2)
     args = parser.parse_args()
     arbour = BarcodeArbour(args)
-    #arbour.run_muscle()
-    #arbour.run_jModelTest()
+    arbour.run_muscle()
+    arbour.run_jModelTest()
     arbour.parse_jModelTest()
     arbour.do_phyml()
