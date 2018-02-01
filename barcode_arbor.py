@@ -107,7 +107,7 @@ class BarcodeArbour(object):
                  'gamma': '-a'}
        
        self.model_data = {}
-       cmd='{Test}\tphyml -i {0} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST'
+       cmd='{Test}\tphyml -i {0} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST --no memory check'
        
        for data in map(get_data, fp):
            cmd_args = cmd
