@@ -47,7 +47,7 @@ def get_sequences(query_sequences, fmt, output_dir, hitlist_size, max_queries):
                     if fail == 15:
                        print "Failed to connect to NCBIWWW server\nExiting...\n"
                        sys.exit(1)
-                    print e
+                    print seq.id,e
                     time.sleep(5)
                     print "Reconnecting to NCBIWWW server..."
                     continue
