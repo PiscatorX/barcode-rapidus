@@ -48,9 +48,13 @@ def get_sequences(query_sequences, fmt, output_dir, hitlist_size, max_queries):
                        print "Failed to connect to NCBIWWW server\nExiting...\n"
                        sys.exit(1)
                     print seq.id,e
+                    if 'ID#24' in str(e):
+                        print 'Skipping...'
+                        break
                     time.sleep(5)
                     print "Reconnecting to NCBIWWW server..."
-                    continue
+            if not results_handle:
+                continue
             with open(save_fname,'w') as save:
                  save.write(results_handle.read())
             i += 1
