@@ -22,9 +22,10 @@ class BarcodeArbour(object):
 
         self.jModelTest_jar = "java -jar /home/andhlovu/bin/jmodeltest2/dist/jModelTest.jar"
         self.modeltest_fmt = 'phylip'
+        self.mrbayes_fmt =  'nexus'
         self.modeltest_infile = ''.join([args.msa_in.replace('fasta',''), self.modeltest_fmt ])
         self.modeltest_out = ''.join([args.msa_in.replace('fasta',''), 'jModelTest' ])
-
+        self.mrbayes_infile = ''.join([args.msa_in.replace('fasta',''), self.mrbayes_fmt ])
         
         
     def run_muscle(self):
@@ -60,7 +61,7 @@ class BarcodeArbour(object):
 
        # -d inputFile Sets the input data file. jModelTest makes use of the ALTER library for converting several alignment formats to PHYLIP
        # -s Sets the number of substitution schemes.
-       # -f Include models with unequals base frecuencies
+       # -f Include models with unequals base frecuencies
        # -i Include models with a proportion invariable sites.
        # -g numberOfRateCategories Include models with rate variation among sites and sets the number of categories. Usually 4 categories are enough.
        # -AIC Calculate the Akaike Information Criterion. 
@@ -160,8 +161,9 @@ class BarcodeArbour(object):
         phyml_cmd = self.model_data['AICc']
         self.run_cmd(phyml_cmd)
 
+        
     def mrbayes(self):
-        pass
+        self.conv(self.msa_out, self.mrbayes_infile, 'fasta', self.mrbayes_fmt)
         
 
     def run_cmd(self, cmd):
