@@ -46,6 +46,7 @@ class  Features(object):
                  if (m == n):
                      self.new_seq_records.append(record)
                  else:
+                     #print extract_feature
                      new_record = extract_feature.extract(record)
                      new_record.annotations = annotations
                      self.new_seq_records.append(new_record)
