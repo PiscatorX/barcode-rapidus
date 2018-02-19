@@ -72,9 +72,10 @@ class BarcodeArbour(object):
        # -a Estimate model-averaged phylogeny for each active criterion.
        # -w Prints out the PAUP block.
        # -tr numberOfThreads Number of threads to execute (default is the number of logical processors in the machine).
-       args = "-d {} -s 11 -f -i -g 4 -AIC -BIC -AICc -DT -p -a -w -tr {} -o {}".format(self.modeltest_infile,\
+       args = "-d {} -s 11 -f -i -g 4 -AICc -p -a -w -tr {} -o {}".format(self.modeltest_infile,\
                                                                                         self.threads,\
-                                                                                        self.modeltest_out)               
+                                                                                        self.modeltest_out)
+       
        jModelTest_cmd = ' '.join([self.jModelTest_jar, args])
        self.run_cmd(jModelTest_cmd)
 
@@ -189,4 +190,5 @@ if  __name__ ==  '__main__':
     arbour.run_jModelTest()
     arbour.parse_jModelTest()
     arbour.phyml()
-    #arbour.mrbayes()
+    #
+    arbour.mrbayes()
