@@ -92,10 +92,7 @@ class BarcodeArbour(object):
 
     def parse_jModelTest(self):
 
-       self.modeltest_out = "RH1-rbcL_ALL.jModelTest"
-       modelTest_fp = open(self.modeltest_out)
-       
-       
+       modelTest_fp = open(self.modeltest_out)       
        for line in modelTest_fp:
             self.block = []
             if line.startswith('Arguments'):
@@ -109,7 +106,7 @@ class BarcodeArbour(object):
                 self.fp_pointer = modelTest_fp 
                 self.GetModel()
        self.PhymlArgs()
-       
+       modelTest_fp.close()
 
 
        
@@ -251,8 +248,8 @@ if  __name__ ==  '__main__':
     parser.add_argument('-t','--threads', type=int, default=2)
     args = parser.parse_args()
     arbour = BarcodeArbour(args)
-    #arbour.run_muscle()
-    #arbour.run_jModelTest()
+    arbour.run_muscle()
+    arbour.run_jModelTest()
     arbour.parse_jModelTest()
-    #arbour.phyml()
-    #arbour.mrbayes()
+    arbour.phyml()
+    arbour.mrbayes()
