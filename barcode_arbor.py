@@ -5,6 +5,7 @@ from Bio import AlignIO
 import itertools as it
 import subprocess
 import argparse
+import pprint
 import sys
 import os
 
@@ -26,7 +27,15 @@ class BarcodeArbour(object):
         self.modeltest_infile = ''.join([args.msa_in.replace('fasta',''), self.modeltest_fmt ])
         self.modeltest_out = ''.join([args.msa_in.replace('fasta',''), 'jModelTest' ])
         self.mrbayes_infile = ''.join([args.msa_in.replace('fasta',''), self.mrbayes_fmt ])
-        
+        self.paup_blocks = {}    
+        self.Test = {}
+        self.model_args = {}
+        self.phyml_template ='phyml -i {msa_fname} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST --no-memory-check'
+        self.mrbayes_params = {'nruns': 1,
+                                'ngen': 100,
+                          'samplefreq': 10,
+                                'file': self.mrbayes_infile}
+
         
     def run_muscle(self):
         
@@ -46,10 +55,10 @@ class BarcodeArbour(object):
         self.run_cmd(str(self.muscle_cline))
         assert os.path.exists(self.msa_out),'Did not find MSA file: {}'.format(self.msa_out)
         self.conv(self.msa_out, self.modeltest_infile, 'fasta', self.modeltest_fmt)
+
+
+
         
-
-
-
     def conv(self, infile, outfile, informat, outformat):
         
         with open(infile) as input_handle, open(outfile, "w") as output_handle:
@@ -78,58 +87,70 @@ class BarcodeArbour(object):
        
        jModelTest_cmd = ' '.join([self.jModelTest_jar, args])
        self.run_cmd(jModelTest_cmd)
-
     
-       
+    
+
     def parse_jModelTest(self):
 
+       self.modeltest_out = "RH1-rbcL_ALL.jModelTest"
+       modelTest_fp = open(self.modeltest_out)
+       
+       
+       for line in modelTest_fp:
+            self.block = []
+            if line.startswith('Arguments'):
+                self.seq_file_name = line.split()[3]
+            if line.startswith("[!"):
+                while not line.startswith('Lset'):
+                     line = modelTest_fp.next().strip()
+                     self.block.append(line)
+                self.PauP2MrBayes()
+            if line.startswith("::Best"):
+                self.fp_pointer = modelTest_fp 
+                self.GetModel()
+       self.PhymlArgs()
+       
+
+
+       
+    def GetModel(self):
         
-       fp = open(self.modeltest_out)
-       
-       data, pos = [ (line, fp.tell()) for line in fp if line.startswith('Arguments') ][0]
-       seq_file_name = data.split()[3]
-       start = False
+        
+        header = ['Test']+[ self.fp_pointer.next().strip() for i in range(2) ][1].split()
+        line = self.fp_pointer.next()
+        while any(line):
+            line = self.fp_pointer.next().strip().split()
+            if any(line):
+                model_params = dict(zip(header, line))
+                model_params.update({'msa_fname': self.seq_file_name})
+                self.Test[model_params['Test']] = model_params
+                 
+                      
+    
+    def PhymlArgs(self):
+        
+        args  = {'titv': '-ts/tv',
+                   'pInv': '-v',
+                  'gamma': '-a'}
+        model_name = {'TrN':'TN93'}
+        get_model =  lambda model: model.split('+', 1)[0]
+        phyl_cmd_fp = open(self.modeltest_out+'.log','w')
+        for test_name, params_data in self.Test.items():
+            cmd = self.phyml_template 
+            rm_list = []
+            for param, value in params_data.items():    
+                if value == 'N/A':
+                    params_data.update({param:''})
+                    cmd = cmd.replace(args.get(param,param),'')
+                if  param == 'Model':
+                    model = get_model(value)
+                    params_data['Model'] = model_name.get(model,model)
+            cmd = cmd.format(**params_data)
+            self.model_args[test_name] = cmd
+            cmd_args = "{}\t{}".format(test_name, cmd)
+            print >>phyl_cmd_fp, cmd_args
 
-       fp.seek(pos)
-       for line in fp:
-           if line.startswith('::Best Models::'):
-               start = True
-           if start:
-               fp.next()
-               params = ['Test']+ fp.next().split()
-               fp.next()
-               break
-       
-       get_data = lambda x: zip(params, x.split())
-       update_vals = {'TrN':'TN93'}
-       phyl_cmd_fp = open(self.modeltest_out+'.log','w')
-       strip_model =  lambda model: model.split('+', 1)[0]
-       del_val = {'titv': '-ts/tv',
-                  'pInv': '-v',
-                 'gamma': '-a'}
-       
-       self.model_data = {}
-       cmd='{Test}\tphyml -i {0} --model {Model} -f {f(a)},{f(c)},{f(g)},{f(t)} -ts/tv {titv} -b 1000 -v {pInv} -a {gamma} -s BEST --no memory check'
-       
-       for data in map(get_data, fp):
-           cmd_args = cmd
-           del_values = []
-           if len(data) < 4:
-               continue
-           phyml_param = dict(data)
-           for k,v in phyml_param.items():
-               if  v == 'N/A':
-                   del_values = del_values + [k, del_val[k]]
-               elif k == 'Model':
-                   phyml_model = strip_model(phyml_param[k])
-                   phyml_param[k] = update_vals.get(phyml_model, phyml_model)
-           for val in del_values:
-               cmd_args = cmd_args.replace(val, '')
-
-           cmd_args = cmd_args.replace('{}','').format(seq_file_name, **phyml_param)
-           self.model_data[phyml_param['Test']] = cmd_args.split("\t",1)[1]
-           print >>phyl_cmd_fp, cmd_args
-       log="""
+        log="""
 #-i seq_file_name 
 #-m (or --model) model
      # model : substitution model name.
@@ -153,18 +174,62 @@ class BarcodeArbour(object):
 # 	  Tree topology search operation option.
 # 	  Can be either NNI (default, fast) or SPR (a bit slower than NNI) or BEST (best of NNI and SPR search).
 """
-       print >>phyl_cmd_fp, log
+        print >>phyl_cmd_fp, log
 
-       
+        
+            
+    def PauP2MrBayes(self):
 
+        model = self.block[0].split()[-1]
+        block = [ item for word in self.block[4].split('=')\
+                   for item in word.rsplit(" ",1) ][1:]
+        data_block =  dict([(param,value) for param, value in\
+                                    it.izip_longest(*[iter(block)]*2)])
+
+        self.paup_blocks[model] = data_block
+        self.mrbayes_params.update(data_block)
+        mrbayes_cmd = """begin mrbayes;
+        set autoclose=yes nowarn=yes;
+        execute {file};
+        lset nst={nst} rates={rates};
+        mcmc nruns={nruns} ngen={ngen} samplefreq={samplefreq} file={file}1;
+        mcmc file={file}2;
+        mcmc file={file}3;
+        end;""".format(**self.mrbayes_params)
+        print mrbayes_cmd
+        exit(1)
+
+
+        
+        # #NST (number of substitution types)
+        # mrbayes_cmd = """begin mrbayes;
+        # set autoclose=yes nowarn=yes;
+        # execute {file};
+        # lset nst={nst} rates={rates};
+        # mcmc nruns={nruns} ngen={ngen} samplefreq={samplefre} file={file}1;
+        # mcmc file={file}2;
+        # mcmc file={file}3;
+        # end;""".format(self.mrbayes_params)
+        # 
+        
+        
+
+        
+
+        
+        
+        
     def phyml(self):
 
-        phyml_cmd = self.model_data['AICc']
+        phyml_cmd = self.model_args['AICc']
         self.run_cmd(phyml_cmd)
 
         
     def mrbayes(self):
         self.conv(self.msa_out, self.mrbayes_infile, 'fasta', self.mrbayes_fmt)
+
+
+
         
 
     def run_cmd(self, cmd):
@@ -186,9 +251,8 @@ if  __name__ ==  '__main__':
     parser.add_argument('-t','--threads', type=int, default=2)
     args = parser.parse_args()
     arbour = BarcodeArbour(args)
-    arbour.run_muscle()
-    arbour.run_jModelTest()
+    #arbour.run_muscle()
+    #arbour.run_jModelTest()
     arbour.parse_jModelTest()
-    arbour.phyml()
-    #
-    arbour.mrbayes()
+    #arbour.phyml()
+    #arbour.mrbayes()
