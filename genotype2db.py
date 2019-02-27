@@ -9,6 +9,7 @@ import csv
 import os
 __author__ = "Andrew Ndhlovu"
 __copyright__ = "Copyright 2018"
+__credits__ = "Rob Knight"
 __license__ = "GPL"
 __version__ = "3"
 __maintainer__ = "Andrew Ndhlovu"
@@ -21,7 +22,7 @@ class ParseBlast(object):
 
     def __init__(self):
 
-        parser = argparse.ArgumentParser(description="parse blast results and optionally create a database of blast results")
+        parser = argparse.ArgumentParser(description=""""parse blast results and optionally create a database of blast results.This utility will generate two file *_blast.ids (lists top scoring gis and accessions) and *_blast.data """)
         parser.add_argument('-r', '--results-dir', dest='results_dir', action='store', type=str, default="blast_results",
                             help="directory where blast files are located")
         parser.add_argument('-f','--fname', dest='fname_patt', action='store', required=False, default= "*.blast", type=str,
@@ -35,7 +36,7 @@ class ParseBlast(object):
         self.results_dir = args.results_dir
         self.blast_files = glob.iglob(os.path.join(os.path.join(self.results_dir, file_patt)))
         self.hit_limit = args.hit_limit
-        self.drop_tags = ['sbjct', 'query', 'num_alignments', 'match']
+        self.drop_tags = ['sbjct', 'frame', 'query', 'strand', 'num_alignments', 'match']
         self.DB = args.db_name
         if self.DB:
              self.DB_conn  = sqlite3.connect(self.DB)
@@ -46,16 +47,15 @@ class ParseBlast(object):
        fname_prefix = os.path.basename(self.results_dir)
        self.refs = {}
        
-       with open(fname_prefix+'.data','w') as data_file:
+       with open(fname_prefix+'_blast.data','w') as data_file:
            for blast_result in self.blast_files:
                self.analyse_result(blast_result, data_file)
                if self.DB:
                    self.DB_conn.commit()
                
-       with open(fname_prefix+'.gi_ids','w') as gi_file, open(fname_prefix+'.acc_ids','w') as acc_file:
+       with open(fname_prefix+'_blast.ids','w') as gi_file:
            for gi, acc in self.refs.items():
-               print >>gi_file,gi
-               print >>acc_file,acc
+               print >>gi_file, "{}\t{}".format(gi, acc)
 
                
     def analyse_result(self, result_file, data_file):
@@ -104,9 +104,7 @@ class ParseBlast(object):
              query_start INT,
              sbjct_end INT,
              sbjct_start INT,
-             score REA,
-             frame INT,
-             strand  INT);""")
+             score REAL);""")
         
         self.DB_conn.commit()
 
@@ -135,9 +133,7 @@ class ParseBlast(object):
              query_start,
              sbjct_end,
              sbjct_start,
-             score,
-             frame,
-             strand)
+             score)
              values 
              ('{align_length}',
              '{accession}',
@@ -153,9 +149,7 @@ class ParseBlast(object):
              '{query_start}',
              '{sbjct_end}',
              '{sbjct_start}',
-             '{score}',
-             '{frame}',
-             '{strand}');""".format(**hsp_data)
+             '{score}');""".format(**hsp_data)
         
         self.DB_c.execute(sql)
 

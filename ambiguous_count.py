@@ -5,31 +5,6 @@ import argparse
 import sys
 from collections import Counter, OrderedDict 
 
-# seq_data = {}
-# for line in open(sys.argv[1]).read().splitlines():
-#     k, v = line.split("  ",1)
-#     if k in 'ACGT':
-#         continue
-#     seq_data[k] = v.strip()
-    
-# pprint.pprint(seq_data)
-# def getNs(seq_file):
-#     with open(seq_file) as seq_fp:
-#         records = SeqIO.parse(seq_fp, 'fasta')
-#         print "="*50
-#         print "{}\t{}\t{}\t{}".format("Len", "N_count", "N_perc", "seq_id")
-#         print "="*50
-#         for rec in records:
-#             seq = rec.seq
-#             seq_len, Ns = len(seq), seq.count('N')
-#             try:
-#                 value = round(float(Ns)/seq_len*100,2)
-#             except:
-#                 value = 0.00
-#             print "{}\t{}\t{}%\t{}".format(seq_len, Ns, value, rec.id)
-
-            
-# getNs(sys.argv[1])
 
 class CountAmbigousDNA(object):
     
@@ -56,19 +31,19 @@ class CountAmbigousDNA(object):
              for seq in seq_data:
                  n  = len(seq)
                  counter_seq  =  Counter(seq.seq)          
-                 self.counter(n, counter_seq)
+                 self.counter(n, seq.id, counter_seq)
              print '='*130
              
 
 
              
-    def counter(self, n, counter_seq):
+    def counter(self, n, seq_id, counter_seq):
         ambiguous_counts = []
         for code in self.ambiguous_DNA:
             count = counter_seq.get(code, 0)
             fraction  =  0 if count == 0 else count/float(n)
             ambiguous_counts.append("{0:}|{1:<8.1%}".format(count,fraction,code))
-        print ''.join(ambiguous_counts)
+        print ''.join(ambiguous_counts)+seq_id+" (n="+str(n)+")"
 
             
 if  __name__ == '__main__':

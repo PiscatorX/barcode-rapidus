@@ -76,7 +76,7 @@ if __name__ ==  '__main__':
     parser.add_argument('-o','--ouput-dir', dest='output_dir', action='store', type=str, required=False,
                         default = "blast_results",  help='output directory')
     parser.add_argument('-s','--hitlist-size', dest='hitlist_size', action='store', type=int, required=False,
-                        default =1,  help='output directory')
+                        default =5,  help='output directory')
     parser.add_argument('-m','--max-queries', dest='max_queries', action='store', type=int, required=False,
                         default =100)
     args = parser.parse_args()

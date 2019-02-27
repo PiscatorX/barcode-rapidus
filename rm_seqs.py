@@ -15,13 +15,16 @@ def get_seqs(args):
        rm_list = open(args.rm_list).read().splitlines()
     if args.acc_list:
        rm_list = args.acc_list
-                  
+    
     with open(args.in_file) as fp:
        data = SeqIO.parse(fp, args.in_format)
        for seq in data:
+           if  len(seq) == 0:
+               print 'no data, removed, ',seq.id,''
+               continue
            ref = seq.id
            if ref in rm_list:
-               print 'removed ',seq.id
+               print 'removed: ',seq.id
                rm_to_save.append(seq)
                continue
            to_save.append(seq)
@@ -34,7 +37,7 @@ def get_seqs(args):
             out_file  = args.out_file
         else:
             out_file = 'pruned_'+args.in_file.replace(args.in_format, args.out_format)
-        SeqIO.write(rm_to_save, open(out_file,'w'), args.out_format)
+        SeqIO.write(to_save, open(out_file,'w'), args.out_format)
 
         
     if args.rm_save and any(rm_to_save):
@@ -42,7 +45,7 @@ def get_seqs(args):
             rm_out_file  = args.rm_out_file
         else:
             rm_out_file = 'removed_'+args.in_file.replace(args.in_format, args.out_format)
-        SeqIO.write(to_save, open(rm_out_file,'w'), args.out_format)
+        SeqIO.write(rm_to_save, open(rm_out_file,'w'), args.out_format)
         
 if __name__ == '__main__':
 

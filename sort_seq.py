@@ -2,7 +2,7 @@
 from Bio import SeqIO
 import argparse
 import pprint
-
+import os
 
 class Sort(object):
 
@@ -19,7 +19,8 @@ class Sort(object):
         args  =  parser.parse_args()
         self.sequences = args.sequences
         self.name_sort = args.name_sort
-        self.sorted = 'sorted_'+args.sequences
+        self.sorted = os.path.join(os.path.dirname(args.sequences),
+                                    'sorted_'+os.path.basename(args.sequences))
         self.ifmt = args.ifmt
         self.ofmt = self.ifmt if not args.ofmt else args.ofmt  
         if self.name_sort and self.ifmt == 'fasta':

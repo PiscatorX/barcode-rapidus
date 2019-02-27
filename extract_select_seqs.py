@@ -16,7 +16,7 @@ def extract_select():
                         help='files with list of accessions ids')
     group.add_argument('-a','--acc-ids',dest='acc_ids', action='store',nargs='+', type=str, required=False,
                         help='space seperated list of  accession ids')
-    group.add_argument('-x','--extract-fname', dest='extract_fname', action='store', type=str, required=False,
+    parser.add_argument('-x','--extract-fname', dest='extract_fname', action='store', type=str, required=False,
                         help='output filename')
     
     args =  parser.parse_args()
@@ -30,10 +30,13 @@ def extract_select():
 
     if not args.out_format:
         args.out_format = args.in_format
-    if not args.out_format:
-        args.out_format = args.in_format
-
-    SeqIO.write([ x for x in seqs if x.id in extract_list ],open('extract_'+args.infile.replace(args.in_format, args.out_format),'w'), args.out_format)
+        
+    if args.extract_fname:
+        args.extract_fname  = args.extract_fname
+    else:
+        args.extract_fname = 'extract_'+args.infile.replace(args.in_format, args.out_format)
+    
+    SeqIO.write([ x for x in seqs if x.id in extract_list ],open(args.extract_fname,'w'), args.out_format)
     
 
 if  __name__ == '__main__':
