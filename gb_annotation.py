@@ -2,6 +2,15 @@
 from Bio import SeqIO
 
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
+
+
 def data(args):
 
     anno = args.annotation 
@@ -12,7 +21,7 @@ def data(args):
     
 if __name__  == '__main__':
 
-    parser = argparse.ArgumentParser(description="""convert and remove sequences""")
+    parser = argparse.ArgumentParser(description="""view and count annotations""")
     
     parser.add_argument('in_file', action='store', type=str)
     parser.add_argument('-a','--anno', dest='annotation', action='store', required=False, type=str)
