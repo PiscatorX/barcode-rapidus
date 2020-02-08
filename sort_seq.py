@@ -4,6 +4,14 @@ import argparse
 import pprint
 import os
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
+
 class Sort(object):
 
     def __init__(self):
@@ -24,7 +32,7 @@ class Sort(object):
         self.ifmt = args.ifmt
         self.ofmt = self.ifmt if not args.ofmt else args.ofmt  
         if self.name_sort and self.ifmt == 'fasta':
-            print 'Invalid argument, cannot sort using orginism name in fasta file, provide Genbank file'
+            print('Invalid argument, cannot sort using orginism name in fasta file, provide Genbank file')
             parser.print_help()
 
             
@@ -42,8 +50,8 @@ class Sort(object):
     
             seq_dict[n]=rec
             
-        sorted_seqs = [ seq_dict[k] for k,v in sorted(ref_dict.iteritems(),\
-                                                      key=lambda (k,v): v)]
+        sorted_seqs = [ seq_dict[k] for k,v in sorted(iter(ref_dict.items()),\
+                                                      key=lambda k_v: k_v[1])]
         with open(self.sorted, 'w') as fp:
             SeqIO.write(sorted_seqs, fp, self.ofmt)
             

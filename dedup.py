@@ -30,20 +30,19 @@ def rm_dup(infile, in_format):
     for rec  in seqs:
         id_tmp  = rec.id
         if id_tmp in seq_ids:
-            print "removed {}.".format(id_tmp)
+            print("removed {}.".format(id_tmp))
             continue
         seq_ids.append(id_tmp)
         deduped_seqs.append(rec)
     #(sequences, handle, format)
 
-    deduped = os.path.join(os.path.dirname(infile),
-            'deduped_'+os.path.basename(infile))
+    deduped = 'deduped_'+os.path.basename(infile)
 
     SeqIO.write(deduped_seqs, open(deduped,'w'), in_format)
     
     with open(infile+'.ids','w') as fp:
         fp.write('# ')
-        fp.writelines(map(lambda x: x+'\n# ', seq_ids))
+        fp.writelines([x+'\n# ' for x in seq_ids])
 
 if  __name__ == '__main__':
     args = cli_init()

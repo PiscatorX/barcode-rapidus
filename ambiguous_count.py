@@ -1,9 +1,16 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 from Bio import SeqIO
 import pprint
 import argparse
 import sys
 from collections import Counter, OrderedDict 
+
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
 
 
 class CountAmbigousDNA(object):
@@ -25,14 +32,14 @@ class CountAmbigousDNA(object):
 
          with open(self.sequence_file)  as fp:
              seq_data  = SeqIO.parse(fp, self.format)
-             print '='*130
-             print ''.join([ "{0:<10}".format(key) for key in self.ambiguous_DNA ])
-             print '='*130
+             print('='*130)
+             print(''.join([ "{0:<10}".format(key) for key in self.ambiguous_DNA ]))
+             print('='*130)
              for seq in seq_data:
                  n  = len(seq)
                  counter_seq  =  Counter(seq.seq)          
                  self.counter(n, seq.id, counter_seq)
-             print '='*130
+             print('='*130)
              
 
 
@@ -43,13 +50,13 @@ class CountAmbigousDNA(object):
             count = counter_seq.get(code, 0)
             fraction  =  0 if count == 0 else count/float(n)
             ambiguous_counts.append("{0:}|{1:<8.1%}".format(count,fraction,code))
-        print ''.join(ambiguous_counts)+seq_id+" (n="+str(n)+")"
+        print(''.join(ambiguous_counts)+seq_id+" (n="+str(n)+")")
 
             
 if  __name__ == '__main__':
     sequence_data  = CountAmbigousDNA()
     sequence_data.CountAmbiguousDNA()
-    print"""\n\n    Code Ambiguity  Complement Mnemonic
+    print("""\n\n    Code Ambiguity  Complement Mnemonic
     A    A          T          adenine
     B    CGT        V          not_adenine
     C    C          G          cytosine
@@ -66,6 +73,6 @@ if  __name__ == '__main__':
     V    ACG        B          not_thymine/uracil
     W    AT         W          weak_bond
     X    ACGT       X          unknown
-    Y    CT         R          pyrimidine\n\n"""
+    Y    CT         R          pyrimidine\n\n""")
 
     

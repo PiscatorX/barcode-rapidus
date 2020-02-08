@@ -19,10 +19,10 @@ def get_anno(args):
          data  = SeqIO.parse(fp, 'gb')
          for  count, seq  in enumerate(data,1):
                 if args.description:
-                    print seq.id, seq.description
+                    print(seq.id, seq.description)
                     continue
                 sys.stderr.write(seq.id+'\t')
-                print seq.annotations[anno]
+                print(seq.annotations[anno])
                 
 if __name__  == '__main__':
 

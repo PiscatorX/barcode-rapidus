@@ -18,15 +18,15 @@ def  get_ref(args):
      
      ref_obj = open(args.infile + '.ref','w')
      path, fname = os.path.split(args.infile)
-     fname = 'final_' + fname.replace(args.in_format,'') + args.out_format
+     fname =  ''.join(['final_',os.path.splitext(fname)[0],'.', args.out_format])
      fname = os.path.join(path, fname)
      seq_obj = open(fname, 'w')
-     args.uniprot = True
      with open(args.infile) as fp:
          seq_data = SeqIO.parse(fp, args.in_format)
          for i,record in enumerate(seq_data, 1):
              if args.uniprot:
                   organism = record.description.split("OS=")[-1].split("OX=")[0].strip()
+                  record.id = record.id.split("|")[1]
              else: 
                   if  args.in_format == 'gb':
                       organism = record.annotations['organism']
@@ -46,6 +46,6 @@ if  __name__ ==  '__main__':
     parser.add_argument('infile', action='store', type=str)
     parser.add_argument('-f','--format', dest='in_format', action='store', default='gb', required=False, type=str)
     parser.add_argument('-o','--out_format', dest='out_format', action='store', default='fasta', required=False, type=str)
-    parser.add_argument('-u','--uniprot', action='store_true', )
+    parser.add_argument('-u','--uniprot', action='store_true', default=False)
     get_ref(parser.parse_args())
 

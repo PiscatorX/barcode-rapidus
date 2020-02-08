@@ -36,7 +36,7 @@ class  GenBankGet(object):
             self.query = [self.args.query]
 
     def query_genbank(self):
-        map(self.gb_search, self.query)
+        list(map(self.gb_search, self.query))
 
         
     def gb_search(self, query):
@@ -46,7 +46,7 @@ class  GenBankGet(object):
              fp.write('\n')
              fp.flush()
              
-         print query
+         print(query)
          fail = 0
          handle = 0
          while not handle:
@@ -55,11 +55,11 @@ class  GenBankGet(object):
              except Exception as e:
                  fail += 1
                  if fail == 15:
-                     print "Failed to connect to NCBI entrez server\nExiting...\n"
+                     print("Failed to connect to NCBI entrez server\nExiting...\n")
                      sys.exit(1)
-                 print e
+                 print(e)
                  time.sleep(5)
-                 print "Reconnecting to NCBI entrez..."
+                 print("Reconnecting to NCBI entrez...")
                  continue
 
          record = Entrez.read(handle)
@@ -69,7 +69,7 @@ class  GenBankGet(object):
          self.args.batchsize =  n_rec if self.args.batchsize >  n_rec else n_rec  
          
          with open('genbank_'+time.strftime('%A-%H-%M-%S')+'.gb','w') as fp:
-             print
+             print()
              for retstart  in range(0, n_rec, self.args.batchsize):
                  handle = False
                  fail = 0
@@ -82,11 +82,11 @@ class  GenBankGet(object):
                      except Exception as e:
                          fail += 1
                          if fail == 15:
-                             print "Failed to connect to NCBI entrez server\nExiting...\n"
+                             print("Failed to connect to NCBI entrez server\nExiting...\n")
                              sys.exit(1)
-                         print e
+                         print(e)
                          time.sleep(5)
-                         print "Reconnecting to NCBI entrez..."
+                         print("Reconnecting to NCBI entrez...")
                          continue
 
                  results =  handle.read()

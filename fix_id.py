@@ -1,6 +1,16 @@
 #!/usr/bin/python
-import argparse
 
+
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
+
+
+import argparse
 from Bio import SeqIO
 import sys
 import os
@@ -16,7 +26,7 @@ def fix_id(fasta_file, spliton):
         for i,seq  in enumerate(fasta_seqs, 1):
             split_id = seq.id.split(spliton,1)[0]
             #[0].split('-')[0]
-            print i,split_id
+            print(i,split_id)
             seq.id = split_id
             new_seqs.append(seq)
         SeqIO.write(new_seqs, fixed_fp, 'fasta')

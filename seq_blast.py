@@ -35,7 +35,7 @@ def get_sequences(query_sequences, fmt, output_dir, hitlist_size, max_queries):
             save_fname = os.path.join(dest_dir, fname)
             if  os.path.exists(save_fname):
                 i += 1
-                print i,save_fname,'File exists...'
+                print(i,save_fname,'File exists...')
                 continue
             results_handle = None
             fail = 0
@@ -45,22 +45,22 @@ def get_sequences(query_sequences, fmt, output_dir, hitlist_size, max_queries):
                 except Exception as e:
                     fail += 1
                     if fail == 15:
-                       print "Failed to connect to NCBIWWW server\nExiting...\n"
+                       print("Failed to connect to NCBIWWW server\nExiting...\n")
                        sys.exit(1)
-                    print seq.id,e
+                    print(seq.id,e)
                     if 'ID#24' in str(e):
-                        print 'Skipping...'
+                        print('Skipping...')
                         break
                     time.sleep(5)
-                    print "Reconnecting to NCBIWWW server..."
+                    print("Reconnecting to NCBIWWW server...")
             if not results_handle:
                 continue
             with open(save_fname,'w') as save:
                  save.write(results_handle.read())
             i += 1
-            print i,save_fname
+            print(i,save_fname)
             if i ==  max_queries:
-                print "Max queries reached! Exiting..."
+                print("Max queries reached! Exiting...")
                 sys.exit(0)
                 
             time.sleep(5)

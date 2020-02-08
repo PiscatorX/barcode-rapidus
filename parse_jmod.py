@@ -2,6 +2,14 @@
 import sys
 import itertools as it
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
+
 def init_param(jmod_out):
 
     fp  = open(jmod_out)
@@ -23,29 +31,29 @@ def get_param(*args):
         if line.startswith('::Best Models::'):
             start = True
         if start:
-            fp.next()
+            next(fp)
             params = ['Test']+ fp.next().split()
-            fp.next()
+            next(fp)
             break
 
     return fp, params 
 
 
 def get_values(fp, params, seq_file_name):
-    print "#!/bin/bash"
-    get_data = lambda x: zip(params, x.split())
+    print("#!/bin/bash")
+    get_data = lambda x: list(zip(params, x.split()))
     update_vals = {'TrN+I+G':'TN93'}
     for data in map(get_data, fp):
         phyml_param = dict(data)
         if len(phyml_param) < 4:
             continue
-        for k,v in phyml_param.iteritems():
+        for k,v in phyml_param.items():
             for k2  in update_vals:
                 if v == k2:
                    phyml_param[k] = update_vals[v]
 
-        print '{Test}\tphyml -i {} --model {Model}  -f {f(a)},{f(c)},{f(g)},{f(t)}  -ts/tv {titv}  -b 1000 -v {pInv}  -a {gamma}  -s  BEST'.format(seq_file_name, **phyml_param)
-    print """
+        print('{Test}\tphyml -i {} --model {Model}  -f {f(a)},{f(c)},{f(g)},{f(t)}  -ts/tv {titv}  -b 1000 -v {pInv}  -a {gamma}  -s  BEST'.format(seq_file_name, **phyml_param))
+    print("""
 #-i seq_file_name 
 #-m (or --model) model
         # model : substitution model name.
@@ -68,7 +76,7 @@ def get_values(fp, params, seq_file_name):
 # -s (or --search) move
 # 	  Tree topology search operation option.
 # 	  Can be either NNI (default, fast) or SPR (a bit slower than NNI) or BEST (best of NNI and SPR search).
-"""
+""")
 
 seq_file_name, fp, pos = init_param(sys.argv[1])        
 fp, params = get_param(fp, pos)

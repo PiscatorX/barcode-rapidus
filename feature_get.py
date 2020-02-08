@@ -50,9 +50,9 @@ class  Features(object):
                      new_record = extract_feature.extract(record)
                      new_record.annotations = annotations
                      self.new_seq_records.append(new_record)
-                     print '>>> {}\t{}\t{}\t{}'.format(record.id, record.annotations['organism'], m, n)
+                     print('>>> {}\t{}\t{}\t{}'.format(record.id, record.annotations['organism'], m, n))
                      count += 1
-        print '\n{} features extracted!'.format(count)
+        print('\n{} features extracted!'.format(count))
     def get_feature(self, record):
         
         for feature in record.features:

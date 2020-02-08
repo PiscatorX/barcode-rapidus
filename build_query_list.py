@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import  argparse
+
 __author__ = "Andrew Ndhlovu"
 __copyright__ = "Copyright 2018"
 __license__ = "GPL"
@@ -11,7 +12,7 @@ __email__ = "drewxdvst@outlook.com"
 
 def build_Q(q_list, query_builder):
     for q  in set(q_list):
-        print query_builder.replace("{}",q)
+        print(query_builder.replace("{}",q))
 
 
 if __name__ ==  '__main__':        

@@ -7,6 +7,7 @@ import sqlite3
 import glob
 import csv
 import os
+
 __author__ = "Andrew Ndhlovu"
 __copyright__ = "Copyright 2018"
 __license__ = "GPL"
@@ -53,9 +54,9 @@ class ParseBlast(object):
                    self.DB_conn.commit()
                
        with open(fname_prefix+'.gi_ids','w') as gi_file, open(fname_prefix+'.acc_ids','w') as acc_file:
-           for gi, acc in self.refs.items():
-               print >>gi_file,gi
-               print >>acc_file,acc
+           for gi, acc in list(self.refs.items()):
+               print(gi, file=gi_file)
+               print(acc, file=acc_file)
 
                
     def analyse_result(self, result_file, data_file):
@@ -63,26 +64,26 @@ class ParseBlast(object):
        
        with open(result_file) as file_obj:
            header = '# '+result_file
-           print header
-           print >>data_file,header
+           print(header)
+           print(header, file=data_file)
            data = NCBIXML.parse(file_obj)
-           records = data.next()
+           records = next(data)
            query = records.query
            hsp_results = {'seq_id' : query }
            
            for count, hit in enumerate(records.alignments, 1):
                #print vars(hit)
                hsp = vars(hit.hsps[0])
-               map(hsp.pop, self.drop_tags)
-               map(hsp_results.update, [hsp, vars(hit)])
+               list(map(hsp.pop, self.drop_tags))
+               list(map(hsp_results.update, [hsp, vars(hit)]))
                hit_def = hsp_results['hit_def']
                hit_id = hsp_results['hit_id']
                data = '\t'+hit.title
                if count <= self.hit_limit:
-                   print >>data_file,data
+                   print(data, file=data_file)
                    gi, acc = hit.hit_id.split('|')[1:4:2]
                    self.refs[gi] = acc
-                   print data
+                   print(data)
                if  self.DB:
                     self.load_sql(hsp_results)
 
@@ -118,7 +119,7 @@ class ParseBlast(object):
         #   'hsps': [<Bio.Blast.Record.HSP object at 0x7f3175331d10>],
         #   'length': 2094,
         #   'title': u'gi|664686838|gb|KF673377.1| Raphidocelis contorta strain SAG 11.81 18S ribosomal RNA gene, complete sequence'}
-        hsp_data = dict((k, str(v).translate(None, """"'(){}""")) for k,v in  hsp_results.items() )
+        hsp_data = dict((k, str(v).translate(None, """"'(){}""")) for k,v in  list(hsp_results.items()) )
                          
         sql ="""INSERT OR IGNORE INTO genotype_hits
             (align_length,

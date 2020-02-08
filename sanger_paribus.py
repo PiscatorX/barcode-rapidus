@@ -35,7 +35,7 @@ class  SangerParibus(object):
     
         self.fwd =  map(self.find_reads, [os.path.join(self.args.fwd, '*.ab1')])[0]
         self.rev =  map(self.find_reads, [os.path.join(self.args.rev, '*.ab1')])[0]
-        self.uniq_ids = Counter(map(lambda x: x[0], self.fwd+self.rev))  
+        self.uniq_ids = Counter([x[0] for x in self.fwd+self.rev])  
 
         
     def find_reads(self, file_patt):
@@ -53,11 +53,11 @@ class  SangerParibus(object):
             fwd_fnames = fetch(read_id,  self.fwd)
             rev_fnames = fetch(read_id,  self.rev)
             i = 1
-            print
+            print()
             for fwd_read,  rev_read in it.izip_longest(fwd_fnames, rev_fnames):
                 fwd_fname =  '{}_{}_{}_F.ab1'.format(read_id,self.args.tag,i)
                 rev_fname =  '{}_{}_{}_R.ab1'.format(read_id,self.args.tag,i)
-                map(self.mv,  [ (fwd_read, fwd_fname), (rev_read, rev_fname)])
+                list(map(self.mv,  [ (fwd_read, fwd_fname), (rev_read, rev_fname)]))
                 i += 1
 
                 
@@ -73,9 +73,9 @@ class  SangerParibus(object):
                if os.path.isdir(dest_dir):
                   pass
                else:
-                   raise Exception,e
+                   raise Exception(e)
             shutil.copy(read, dest_fname)
-            print read, dest_fname
+            print(read, dest_fname)
 
 if  __name__ ==  '__main__':
     sanger_reads = SangerParibus()

@@ -2,6 +2,16 @@
 from Bio import SeqIO
 import argparse
 
+
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
+
+
 class Trim(object):
 
     def __init__(self):
@@ -21,7 +31,7 @@ class Trim(object):
             trimmed_seq = self.rm_N(rec.seq.upper())
             rec.seq = trimmed_seq
             if  not any(rec.seq):
-                print "{} removed, no data!".format(rec.id)
+                print("{} removed, no data!".format(rec.id))
                 continue
             
             trimmed_seqs.append(rec)

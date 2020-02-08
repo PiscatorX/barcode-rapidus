@@ -10,6 +10,13 @@ import pprint
 import sys
 import os
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
 
 
 
@@ -122,11 +129,11 @@ class BarcodeArbour(object):
         
         
         header = ['Test']+[ self.fp_pointer.next().strip() for i in range(2) ][1].split()
-        line = self.fp_pointer.next()
+        line = next(self.fp_pointer)
         while any(line):
             line = self.fp_pointer.next().strip().split()
             if any(line):
-                model_params = dict(zip(header, line))
+                model_params = dict(list(zip(header, line)))
                 model_params.update({'msa_fname': self.seq_file_name})
                 self.Test[model_params['Test']] = model_params
                  
@@ -140,10 +147,10 @@ class BarcodeArbour(object):
         model_name = {'TrN':'TN93'}
         get_model =  lambda model: model.split('+', 1)[0]
         phyl_cmd_fp = open(self.modeltest_out+'.log','w')
-        for test_name, params_data in self.Test.items():
+        for test_name, params_data in list(self.Test.items()):
             cmd = self.phyml_template 
             rm_list = []
-            for param, value in params_data.items():    
+            for param, value in list(params_data.items()):    
                 if value == 'N/A':
                     params_data.update({param:''})
                     cmd = cmd.replace(args.get(param,param),'')
@@ -153,7 +160,7 @@ class BarcodeArbour(object):
             cmd = cmd.format(**params_data)
             self.model_args[test_name] = cmd
             cmd_args = "{}\t{}".format(test_name, cmd)
-            print >>phyl_cmd_fp, cmd_args
+            print(cmd_args, file=phyl_cmd_fp)
 
         log="""
 # -i seq_file_name 
@@ -179,7 +186,7 @@ class BarcodeArbour(object):
 #  	Tree topology search operation option.
 #  	Can be either NNI (default, fast) or SPR (a bit slower than NNI) or BEST (best of NNI and SPR search).
 """
-        print >>phyl_cmd_fp, log
+        print(log, file=phyl_cmd_fp)
 
         
             
@@ -286,7 +293,7 @@ class BarcodeArbour(object):
 	mcmc;
 	sumt;
 END;""".format(**data_block)
-        print mrbayes_cmd
+        print(mrbayes_cmd)
         
 	# print data_block
         self.mrbayes_blocks[model] = mrbayes_cmd
@@ -302,7 +309,7 @@ END;""".format(**data_block)
 
         
     def mrbayes(self):
-        print self.mrbayes_blocks
+        print(self.mrbayes_blocks)
         self.conv(self.msa_out, self.mrbayes_infile, 'fasta', self.mrbayes_fmt)
         proc_input = self.mrbayes_blocks['AICc']
         self.run_cmd('mb', input=proc_input)
@@ -312,7 +319,7 @@ END;""".format(**data_block)
         
 
     def run_cmd(self, cmd, input=None):
-        print cmd
+        print(cmd)
         process = subprocess.Popen(cmd,
                                  stdin=subprocess.PIPE,
                                  stdout=subprocess.PIPE,
@@ -320,8 +327,8 @@ END;""".format(**data_block)
                                  shell=True)
         
         self.stdout, self.stderr= process.communicate(input)
-        print self.stdout
-        print self.stderr
+        print(self.stdout)
+        print(self.stderr)
 
         
 if  __name__ ==  '__main__':

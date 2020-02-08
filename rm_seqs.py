@@ -4,6 +4,13 @@ import argparse
 import pprint
 import  sys
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
 
 def get_seqs(args):
         
@@ -12,7 +19,7 @@ def get_seqs(args):
     rm_to_save = []
     
     if args.rm_list: 
-       rm_list = open(args.rm_list).read().splitlines()
+       rm_list = open(args.rm_list).read().split()
     if args.acc_list:
        rm_list = args.acc_list
     
@@ -20,11 +27,11 @@ def get_seqs(args):
        data = SeqIO.parse(fp, args.in_format)
        for seq in data:
            if  len(seq) == 0:
-               print 'no data, removed, ',seq.id,''
+               print('no data, removed, ',seq.id,'')
                continue
            ref = seq.id
            if ref in rm_list:
-               print 'removed: ',seq.id
+               print('removed: ',seq.id)
                rm_to_save.append(seq)
                continue
            to_save.append(seq)

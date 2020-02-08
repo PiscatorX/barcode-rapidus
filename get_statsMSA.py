@@ -4,6 +4,14 @@ from  Bio import SeqIO
 import argparse
 import sys
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2018"
+__credits__ = ""
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
+
 
 
 def parse_stats(f_name, fmt):
@@ -13,12 +21,12 @@ def parse_stats(f_name, fmt):
     for seq in msa:
         i += 1
         n = len(seq)
-        ambigs  = sum([ v for k,v in Counter(seq.seq).items() if k in ambiguous_DNA ])
+        ambigs  = sum([ v for k,v in list(Counter(seq.seq).items()) if k in ambiguous_DNA ])
         perc_ambigs = 0 if n == 0 else ambigs/float(n)
         if fmt=='gb':  
-            print "{}\t{}\t{}({:.2%})\t{}\t{}".format(i, n, ambigs, perc_ambigs, seq.annotations['organism'], seq.id)
+            print(("{}\t{}\t{}({:.2%})\t{}\t{}".format(i, n, ambigs, perc_ambigs, seq.annotations['organism'], seq.id)))
         else:
-            print "{}\t{}\t{}({:.2%})\t{}".format(i, n, ambigs, perc_ambigs, seq.id)
+            print(("{}\t{}\t{}({:.2%})\t{}".format(i, n, ambigs, perc_ambigs, seq.id)))
 
 
 

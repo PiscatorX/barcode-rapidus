@@ -1,7 +1,14 @@
 #!/usr/bin/env python 
 from Bio import SeqIO
 import argparse
+import os
 
+__author__ = "Andrew Ndhlovu"
+__copyright__ = "Copyright 2019"
+__license__ = "GPL"
+__version__ = "3"
+__maintainer__ = "Andrew Ndhlovu"
+__email__ = "drewxdvst@outlook.com"
 
 
 
@@ -22,7 +29,7 @@ def extract_select():
     args =  parser.parse_args()
     
     if  args.list_file:
-        extract_list = map(lambda x:x.strip(),  open(args.list_file).read().splitlines())
+        extract_list = [x.strip() for x in open(args.list_file).read().splitlines()]
     if  args.acc_ids:
         extract_list = args.acc_ids
         
@@ -32,11 +39,13 @@ def extract_select():
         args.out_format = args.in_format
         
     if args.extract_fname:
-        args.extract_fname  = args.extract_fname
+        new_filename  = args.extract_fname
     else:
-        args.extract_fname = 'extract_'+args.infile.replace(args.in_format, args.out_format)
-    
-    SeqIO.write([ x for x in seqs if x.id in extract_list ],open(args.extract_fname,'w'), args.out_format)
+        path, fname = os.path.split(args.infile)
+        filename, ext = os.path.splitext(fname)
+        new_filename = 'extract_' + '.'.join([filename, args.out_format])
+
+    SeqIO.write([ x for x in seqs if x.id in extract_list ],open(new_filename, 'w'), args.out_format)
     
 
 if  __name__ == '__main__':

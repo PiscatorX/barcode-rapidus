@@ -11,6 +11,7 @@ __license__ = "GPL"
 __version__ = "3"
 __maintainer__ = "Andrew Ndhlovu"
 __email__ = "drewxdvst@outlook.com"
+
 global code2name
 code2name = None
 
@@ -38,7 +39,7 @@ class DrawTree(object):
             data = tuple(line.split('\t'))[:2]
             if len(data) == 2:
                 code2name[data[0]] = data[1]
-        print code2name
+        print(code2name)
         return code2name
 
 

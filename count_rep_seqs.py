@@ -21,11 +21,11 @@ def get_seqs(args):
        for seq in data:
            seq_data[seq.id].append(seq)
            
-    for seq_id, seq_records in  seq_data.items():
+    for seq_id, seq_records in  list(seq_data.items()):
         n =  len(seq_records)
         if n <= 1:
             continue
-        print"{}\t{}".format(seq_id, n)
+        print("{}\t{}".format(seq_id, n))
         if args.save:
             seq_fname =  '.'.join([seq_id, args.out_format])
             with open(seq_fname, 'w') as fp:
