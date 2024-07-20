@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from Bio import SeqIO
-from Bio.Alphabet import generic_dna
+#from Bio.Alphabet import generic_dna
 import argparse
 import os
 
@@ -22,7 +22,7 @@ def conv(args):
     print('Converting to {}'.format(outfile))
 
     with open(args.infile, "r") as input_handle, open(outfile, "w") as output_handle:  
-        alignments = SeqIO.parse(input_handle, args.infmt, generic_dna)
+        alignments = SeqIO.parse(input_handle, args.infmt)
         SeqIO.write(alignments, output_handle, args.ofmt)
     
     

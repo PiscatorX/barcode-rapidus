@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 
 __author__ = "Andrew Ndhlovu"
@@ -15,11 +15,9 @@ from Bio import SeqIO
 import sys
 import os
 
-def fix_id(fasta_file, spliton):
+def fix_id(fasta_file, spliton, output, description):
 
-    fixed_fasta = os.path.join(os.path.dirname(fasta_file),
-                                    'fixed_'+os.path.basename(fasta_file))
-    fixed_fp = open(fixed_fasta,'w')
+    fixed_fp = open(output,'w')
     with open(fasta_file) as fasta_object:
         fasta_seqs  = SeqIO.parse(fasta_object, 'fasta')
         new_seqs = []
@@ -28,6 +26,8 @@ def fix_id(fasta_file, spliton):
             #[0].split('-')[0]
             print(i,split_id)
             seq.id = split_id
+            if not description:
+                seq.description = ""
             new_seqs.append(seq)
         SeqIO.write(new_seqs, fixed_fp, 'fasta')
     fixed_fp.close()
@@ -36,5 +36,10 @@ if  __name__ == '__main__':
     parser.add_argument('fasta_file',action='store', type=str, help="sequence in fasta format")
     parser.add_argument('-s','--spliton', default = '_', type=str, required=False,
                         help='split char for sequence id')
+    parser.add_argument('-d','--description', action='store_true',
+                        help='save description')
+    parser.add_argument('-o','--output', type=str, required = True,
+                        help='output filename')
+    
     args  =  parser.parse_args()
-    fix_id(args.fasta_file, args.spliton)
+    fix_id(args.fasta_file, args.spliton, args.output, args.description)
